@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>임대계약관리 | ezREMS</title>
+  <style>:root {
+  --color-primary-dark:   #252E34;
+  --color-primary-blue:   #3B70DA;
+  --color-primary-navy:   #0A2F49;
+  --color-accent:         #EEA11A;
+  --color-info:           #137BB7;
+  --color-danger:         #FF0000;
+  --color-bg-body:        #E6EAED;
+  --color-surface:        #FFFFFF;
+  --color-input-bg:       #F1F1F1;
+  --color-table-header:   #F3F5F3;
+  --color-selected-row:   #E7F3FF;
+  --color-border:         #DDDDDD;
+  --color-border-dark:    #CCCCCC;
+  --color-text-primary:   #222222;
+  --color-text-secondary: #666666;
+  --color-text-form:      #4F4F4F;
+  --color-text-muted:     #999999;
+  --color-text-gnb:       #747474;
+  --font-family: AppleSDGothicNeo, "Malgun Gothic", "Noto Sans Korean", sans-serif;
+  --font-size-base:   12px;
+  --font-size-label:  12px;
+  --font-weight-normal: 400;
+  --font-weight-light:  300;
+  --font-weight-bold:   700;
+  --font-weight-black:  800;
+  --space-xs:  2px;
+  --space-sm:  5px;
+  --space-md:  10px;
+  --space-lg:  15px;
+  --space-xl:  20px;
+  --radius-none:   0px;
+  --radius-sm:     3px;
+  --radius-md:     4px;
+  --radius-badge:  5px;
+  --radius-tag:    3.2px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.12);
+  --height-gnb:     50px;
+  --height-tab-bar: 34px;
+  --height-btn:     26px;
+  --height-input:   24px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 10px; }
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-body);
+  line-height: 1.5;
+}
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--color-primary-blue); }
+ul, ol { list-style: none; }
+button { cursor: pointer; font-family: inherit; font-size: var(--font-size-base); border: none; background: none; }
+input, select, textarea { font-family: inherit; font-size: var(--font-size-base); }
+table { border-collapse: collapse; width: 100%; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f0f0f0; }
+::-webkit-scrollbar-thumb { background: #bbb; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #888; }
+
+.gnb {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--height-gnb);
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  display: flex; align-items: center;
+  padding: 0 var(--space-md);
+  z-index: 1000;
+  box-shadow: var(--shadow-sm);
+}
+.gnb__logo {
+  font-size: 22px; font-weight: 900;
+  color: #e53e3e;
+  margin-right: var(--space-xl);
+  letter-spacing: -2px;
+  font-style: italic;
+}
+.gnb__logo span { color: #222; }
+.gnb__menu { flex: 1; }
+.gnb__menu > ul { display: flex; }
+.gnb__menu > ul > li > a {
+  display: block; padding: 0 14px;
+  height: var(--height-gnb); line-height: var(--height-gnb);
+  font-size: var(--font-size-base);
+  color: var(--color-text-gnb);
+  font-weight: var(--font-weight-bold);
+  transition: color 0.15s;
+}
+.gnb__menu > ul > li > a:hover,
+.gnb__menu > ul > li.active > a {
+  color: var(--color-primary-navy);
+  border-bottom: 2px solid var(--color-primary-navy);
+  text-decoration: none;
+}
+.gnb__user {
+  display: flex; align-items: center;
+  gap: var(--space-md);
+  font-size: var(--font-size-base);
+  color: var(--color-text-gnb);
+}
+.gnb__timer { font-weight: var(--font-weight-bold); color: #333; }
+.gnb__username { font-weight: var(--font-weight-bold); color: #333; }
+
+.tab-bar {
+  position: fixed; top: var(--height-gnb); left: 0; right: 0;
+  height: var(--height-tab-bar);
+  background-color: #E8EAEC;
+  border-bottom: 1px solid var(--color-border);
+  display: flex; align-items: center;
+  padding: 0 var(--space-md);
+  z-index: 900; gap: var(--space-sm);
+}
+.tab-bar__list { display: flex; gap: 4px; flex: 1; }
+.tab-bar__item {
+  display: inline-flex; align-items: center;
+  height: 26px; padding: 0 var(--space-md);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary); gap: 6px; cursor: pointer;
+}
+.tab-bar__item--active {
+  background-color: var(--color-primary-navy);
+  color: var(--color-surface);
+  border-color: var(--color-primary-navy);
+}
+.tab-bar__item .tab-close {
+  font-size: 14px; line-height: 1; opacity: 0.6;
+  cursor: pointer; padding: 0 2px;
+}
+.tab-bar__item .tab-close:hover { opacity: 1; }
+.tab-bar__close-all {
+  font-size: 11px; color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.page-wrapper {
+  margin-top: calc(var(--height-gnb) + var(--height-tab-bar));
+  padding: var(--space-md);
+  min-height: calc(100vh - var(--height-gnb) - var(--height-tab-bar));
+}
+.page-header {
+  display: flex; align-items: center;
+  gap: var(--space-sm); padding: 6px 0;
+  margin-bottom: var(--space-md);
+}
+.page-title {
+  font-size: 15px; font-weight: var(--font-weight-black);
+  color: var(--color-text-primary);
+}
+.icon-btn--star { font-size: 14px; color: #aaa; cursor: pointer; background: none; border: none; }
+.icon-btn--star:hover { color: #EEA11A; }
+
+.search-area {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+.search-row {
+  display: flex; flex-wrap: wrap;
+  align-items: center; gap: var(--space-sm);
+}
+
+.action-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: var(--space-sm) 0; margin-bottom: var(--space-sm);
+}
+.action-bar__left, .action-bar__right { display: flex; gap: var(--space-xs); }
+
+.split-view {
+  display: flex; gap: var(--space-sm);
+  height: calc(100vh - var(--height-gnb) - var(--height-tab-bar) - 140px);
+}
+.split-view__list {
+  flex: 0 0 44%;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  overflow: hidden; display: flex; flex-direction: column;
+}
+.split-view__detail {
+  flex: 1;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  overflow-y: auto;
+}
+.section-header {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+  background: #fafafa;
+}
+.section-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text-primary);
+}
+.table-wrap { overflow: auto; flex: 1; }
+
+.form-panel { padding: var(--space-md); }
+.form-section { margin-bottom: var(--space-lg); }
+.form-section__title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-black);
+  color: var(--color-text-primary);
+  padding: 4px 0; margin-bottom: 6px;
+  border-bottom: 1px solid #eee;
+}
+.form-section__title--required { color: var(--color-danger); }
+.form-grid { display: flex; flex-direction: column; gap: 2px; }
+.form-row {
+  display: flex; align-items: center;
+  gap: var(--space-sm); flex-wrap: wrap;
+  padding: 3px 0; min-height: 28px;
+}
+.form-footer {
+  display: flex; justify-content: center;
+  padding: var(--space-md) 0; border-top: 1px solid var(--color-border);
+  margin-top: var(--space-md);
+}
+
+/* ── 버튼 ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: var(--height-btn); padding: 0 var(--space-lg);
+  font-size: var(--font-size-base); font-family: var(--font-family);
+  border-radius: var(--radius-sm); border: 1px solid transparent;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity 0.15s, background-color 0.15s;
+}
+.btn:hover { opacity: 0.82; }
+.btn.primary { background-color: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+.btn.outline { background-color: #fff; color: var(--color-primary-navy); border-color: var(--color-primary-navy); }
+.btn.outline--danger { background-color: #fff; color: var(--color-danger); border-color: var(--color-accent); }
+.btn.contained { background-color: var(--color-primary-navy); color: #fff; border-color: var(--color-primary-navy); }
+.btn.secondary { background-color: #fff; color: var(--color-text-secondary); border-color: var(--color-border-dark); }
+.btn.btn--scroll { background-color: var(--color-primary-blue); color: #fff; border-color: var(--color-primary-blue); border-radius: 20px; }
+.btn--sm { height: 22px; padding: 0 var(--space-md); font-size: 11px; }
+
+/* ── 배지 ── */
+.badge {
+  display: inline-flex; align-items: center;
+  height: 22px; padding: 0 10px;
+  font-size: var(--font-size-base);
+  border-radius: var(--radius-badge);
+}
+.badge--primary { background-color: var(--color-primary-dark); color: #fff; }
+.badge--sub { background-color: var(--color-primary-blue); color: #fff; }
+.tag-badge {
+  display: inline-block; padding: 2px 7px;
+  font-size: 11px; border-radius: var(--radius-tag);
+  background-color: #D1CCC9; color: #000;
+  font-weight: var(--font-weight-bold);
+}
+.date-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 3px 8px; font-size: 11px;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-bold); color: #fff;
+}
+.date-badge--expired  { background-color: var(--color-primary-dark); }
+.date-badge--near     { background-color: #C25D00; }
+.date-badge--future   { background-color: var(--color-primary-navy); }
+
+/* ── 폼 요소 ── */
+.form-label {
+  font-size: var(--font-size-label);
+  font-weight: var(--font-weight-light);
+  color: var(--color-text-muted);
+  white-space: nowrap; min-width: 60px;
+}
+.form-label--required { color: var(--color-danger); font-weight: var(--font-weight-bold); }
+.form-control {
+  height: var(--height-input); padding: 0 var(--space-sm);
+  font-size: var(--font-size-base); font-family: var(--font-family);
+  color: var(--color-text-muted);
+  background-color: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-none); outline: none;
+}
+.form-control:focus { border-color: var(--color-primary-blue); background-color: #fff; color: var(--color-text-form); }
+.form-control--edit { background-color: #fff; color: var(--color-text-form); }
+.form-control--full { width: 100%; }
+.form-control-sm { height: 20px; padding: 0 4px; font-size: 11px; }
+select.form-control { background-color: #fff; color: var(--color-text-form); appearance: auto; }
+.form-unit { font-size: 11px; color: var(--color-text-secondary); white-space: nowrap; }
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: var(--height-input);
+  border: 1px solid var(--color-border);
+  background: #fff; cursor: pointer; font-size: 12px; border-radius: 2px;
+}
+.icon-btn:hover { background: #f0f0f0; }
+.checkbox-wrap { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+.checkbox-wrap input[type=checkbox] { width: 14px; height: 14px; cursor: pointer; }
+
+/* ── 테이블 ── */
+.data-table { font-size: var(--font-size-base); }
+.data-table thead th {
+  background-color: var(--color-table-header);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+  padding: 5px 6px;
+  border: 1px solid var(--color-border);
+  text-align: center; white-space: nowrap; position: sticky; top: 0;
+}
+.data-table tbody td {
+  background-color: #fff; color: var(--color-text-primary);
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--color-border);
+  border-right: 1px solid #efefef;
+  text-align: center; white-space: nowrap;
+}
+.data-table tbody tr:hover td { background-color: #F5F8FF; cursor: pointer; }
+.data-table tbody tr.row--selected td { background-color: var(--color-selected-row); }
+.data-table tbody tr.row--selected td:first-child { border-left: 3px solid var(--color-primary-blue); }
+
+/* ── 페이지네이션 ── */
+.pagination { display: flex; justify-content: center; gap: 2px; padding: var(--space-sm); }
+.pagination__btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 26px; padding: 0 6px;
+  border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+  font-size: var(--font-size-base); cursor: pointer; background: #fff;
+}
+.pagination__btn:hover { background: #f0f0f0; }
+.pagination__btn--active { background: var(--color-primary-navy); color: #fff; border-color: var(--color-primary-navy); }
+
+/* ── 알림/토스트 ── */
+.toast {
+  position: fixed; bottom: 20px; right: 20px;
+  padding: 10px 18px; border-radius: var(--radius-md);
+  font-size: var(--font-size-base); color: #fff; z-index: 9999;
+  animation: slideIn 0.3s ease;
+}
+.toast--success { background-color: #28a745; }
+.toast--error   { background-color: #dc3545; }
+.toast--info    { background-color: var(--color-primary-blue); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ── 로딩 ── */
+.loading-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+  display: flex; align-items: center; justify-content: center; z-index: 9998;
+}
+.loading-spinner {
+  width: 40px; height: 40px; border: 4px solid #fff;
+  border-top-color: var(--color-accent);
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }</style>
+</head>
+<body>
+
+  <!-- ① GNB -->
+  <header class="gnb">
+    <div class="gnb__logo">ERE<span>.</span></div>
+    <nav class="gnb__menu">
+      <ul>
+        <li class="active"><a href="#">주택</a></li>
+        <li><a href="#">오피스/리테일</a></li>
+        <li><a href="#">시니어케어</a></li>
+        <li><a href="#">헬스케어</a></li>
+        <li><a href="#">서비스운영</a></li>
+        <li><a href="#">영업/매출/POS</a></li>
+        <li><a href="#">무형자산</a></li>
+        <li><a href="#">결재</a></li>
+      </ul>
+    </nav>
+    <div class="gnb__user">
+      <button class="btn secondary btn--sm" style="background:#EEA11A;color:#fff;border-color:#EEA11A;">문의하기</button>
+      <span style="font-size:18px;font-weight:900;color:#0A2F49;border:2px solid #0A2F49;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;">14</span>
+      <span class="gnb__username">김인섭</span>
+      <span class="gnb__timer">30:00</span>
+      <button class="btn secondary btn--sm">연장</button>
+    </div>
+  </header>
+
+  <!-- ② 탭 바 -->
+  <div class="tab-bar">
+    <ul class="tab-bar__list">
+      <li class="tab-bar__item tab-bar__item--active">
+        🏠 임대계약관리 <span class="tab-close">×</span>
+      </li>
+    </ul>
+    <a href="#" class="tab-bar__close-all">모두 닫기</a>
+  </div>
+
+  <!-- ③ 페이지 본문 -->
+  <main class="page-wrapper">
+
+    <!-- 페이지 헤더 -->
+    <div class="page-header">
+      <span class="badge badge--primary">임대주택</span>
+      <span class="badge badge--sub">계약관리</span>
+      <h1 class="page-title">임대계약관리</h1>
+      <button class="icon-btn--star" title="즐겨찾기">☆</button>
+    </div>
+
+    <!-- ④ 검색 필터 -->
+    <section class="search-area">
+      <div class="search-row">
+        <label class="form-label">사업지</label>
+        <select class="form-control" style="width:160px">
+          <option>제온스빌딩(ZEONS1)</option>
+          <option>제온스빌딩(ZEONS2)</option>
+        </select>
+        <button class="icon-btn" title="홈">🏠</button>
+        <label class="form-label">등/층/호</label>
+        <input type="text" class="form-control" style="width:60px">
+        <input type="text" class="form-control" style="width:60px">
+        <input type="text" class="form-control" style="width:60px">
+        <label class="form-label">계약자명</label>
+        <input type="text" class="form-control" style="width:120px">
+        <label class="checkbox-wrap form-label">
+          <input type="checkbox"> 퇴거예정
+        </label>
+        <label class="checkbox-wrap form-label">
+          <input type="checkbox"> 계약만료
+        </label>
+        <button class="btn primary" id="searchBtn">조회</button>
+      </div>
+    </section>
+
+    <!-- ⑤ 액션 버튼 바 -->
+    <div class="action-bar">
+      <div class="action-bar__left">
+        <button class="btn outline">+ 특별공급등록</button>
+        <button class="btn outline">⊕ 계약등록</button>
+        <button class="btn outline">📄 표준계약서 인쇄</button>
+        <button class="btn outline">📋 각종 확인서 출력</button>
+        <button class="btn outline--danger">✉ 전자계약서 발송</button>
+        <button class="btn contained" id="deleteBtn">— 삭제</button>
+      </div>
+      <div class="action-bar__right">
+        <button class="btn secondary" id="excelBtn">↓ 엑셀</button>
+        <button class="btn secondary" id="saveBtn">저장</button>
+      </div>
+    </div>
+
+    <!-- ⑥ 스플릿 레이아웃 -->
+    <div class="split-view">
+
+      <!-- 목록 패널 -->
+      <section class="split-view__list">
+        <div class="section-header">
+          <h2 class="section-title">계약정보</h2>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>동</th>
+                <th>등기호실</th>
+                <th>사용호실</th>
+                <th>타입</th>
+                <th>계약자명</th>
+                <th>계약시작일</th>
+                <th>계약종료일</th>
+                <th>실입주일</th>
+                <th>퇴거</th>
+              </tr>
+            </thead>
+            <tbody id="contractTbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 상세/폼 패널 -->
+      <section class="split-view__detail">
+        <div class="section-header">
+          <h2 class="section-title">기본정보</h2>
+        </div>
+        <div class="form-panel" id="detailForm">
+
+          <!-- 기본정보 섹션 -->
+          <div class="form-section">
+            <h3 class="form-section__title">기본정보</h3>
+            <div class="form-grid">
+              <div class="form-row">
+                <label class="form-label form-label--required">계약자명</label>
+                <input name="name" type="text" class="form-control form-control--edit" style="width:120px">
+                <button class="icon-btn">🔍</button>
+                <span class="form-unit" id="cnt">1</span>
+                <label class="form-label">사업자(주민)번호</label>
+                <input name="bizNo" type="text" class="form-control" style="width:120px">
+                <button class="icon-btn">🔍</button>
+                <label class="form-label">연락처</label>
+                <input name="contact" type="text" class="form-control" style="width:100px">
+              </div>
+            </div>
+          </div>
+
+          <!-- 고객 담당자 섹션 -->
+          <div class="form-section">
+            <h3 class="form-section__title">고객 담당자</h3>
+            <div class="form-grid">
+              <div class="form-row">
+                <label class="form-label">TAX 담당자명</label>
+                <input name="taxManager" type="text" class="form-control" style="width:120px">
+                <label class="form-label">담당자 핸드폰</label>
+                <input name="phone" type="text" class="form-control" style="width:60px">
+                <input type="text" class="form-control" style="width:50px">
+                <input type="text" class="form-control" style="width:50px">
+                <label class="form-label">담당자 이메일</label>
+                <input name="email" type="text" class="form-control" style="width:100px">
+              </div>
+              <div class="form-row">
+                <label class="form-label">동거인명</label>
+                <input type="text" class="form-control" style="width:120px">
+                <label class="form-label">동거인 연락처</label>
+                <input type="text" class="form-control" style="width:60px">
+                <input type="text" class="form-control" style="width:50px">
+                <input type="text" class="form-control" style="width:50px">
+                <label class="form-label">동거인 이메일</label>
+                <input type="text" class="form-control" style="width:100px">
+              </div>
+            </div>
+          </div>
+
+          <!-- 계약채널 섹션 -->
+          <div class="form-section">
+            <h3 class="form-section__title form-section__title--required">계약채널</h3>
+            <div class="form-grid">
+              <div class="form-row">
+                <label class="form-label form-label--required">구분</label>
+                <select name="channel" class="form-control" style="width:160px">
+                  <option>직접계약(법인)</option>
+                  <option>직접계약(개인)</option>
+                  <option>부동산중개</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 청약구분 섹션 -->
+          <div class="form-section">
+            <h3 class="form-section__title">청약구분</h3>
+            <div class="form-grid">
+              <div class="form-row">
+                <label class="form-label form-label--required">청약종류</label>
+                <select name="subscType" class="form-control" style="width:200px">
+                  <option>삼성동 뉴스테이+ 특약 4년</option>
+                  <option>일반 임대</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label class="form-label form-label--required">보증금변경</label>
+                <select name="deposit" class="form-control" style="width:200px">
+                  <option value=""></option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- 계약정보 섹션 -->
+          <div class="form-section">
+            <h3 class="form-section__title">계약정보</h3>
+            <div class="form-grid">
+              <div class="form-row">
+                <label class="form-label">계약종류</label>
+                <select name="contractType" class="form-control" style="width:100px">
+                  <option>단독관리비</option>
+                  <option>통합관리비</option>
+                </select>
+                <label class="form-label form-label--required">계약일자</label>
+                <input name="contractDate" type="text" class="form-control" style="width:100px">
+                <label class="form-label form-label--required">계약기간</label>
+                <input name="contractPeriodStart" type="text" class="form-control" style="width:100px">
+                <span class="form-unit">~</span>
+                <input name="contractPeriodEnd" type="text" class="form-control" style="width:100px">
+              </div>
+              <div class="form-row">
+                <label class="form-label">입주일(계약서)</label>
+                <input name="moveInDoc" type="text" class="form-control" style="width:100px">
+                <label class="form-label">입주일</label>
+                <input name="moveIn" type="text" class="form-control form-control--edit" style="width:100px">
+                <label class="form-label">퇴거예정일</label>
+                <button class="icon-btn">🔍</button>
+                <input name="vacateExpected" type="text" class="form-control" style="width:100px">
+                <label class="form-label">퇴거일</label>
+                <input name="vacateDate" type="text" class="form-control form-control--edit" style="width:100px">
+              </div>
+              <div class="form-row">
+                <label class="form-label form-label--required">임대료</label>
+                <input name="rent" type="text" class="form-control form-control--amount" style="width:80px;text-align:right">
+                <label class="form-label">임대료기산일</label>
+                <input name="rentBaseDate" type="text" class="form-control" style="width:100px">
+                <label class="form-label">임대료과세여부</label>
+                <select name="rentTaxable" class="form-control" style="width:70px">
+                  <option>과세</option><option>면세</option>
+                </select>
+                <label class="form-label">임대료선납여부</label>
+                <select name="rentPayType" class="form-control" style="width:70px">
+                  <option>월선납</option><option>월후납</option><option>중간납</option>
+                </select>
+                <input name="rentPayDay" type="text" class="form-control" style="width:36px;text-align:center">
+              </div>
+              <div class="form-row">
+                <label class="form-label">관리비</label>
+                <input name="management" type="text" class="form-control form-control--amount" style="width:80px;text-align:right">
+                <label class="form-label">관리비기산일</label>
+                <input name="mgmtBaseDate" type="text" class="form-control" style="width:100px">
+                <label class="form-label">관리비과세여부</label>
+                <select name="mgmtTaxable" class="form-control" style="width:70px">
+                  <option>면세</option><option>과세</option>
+                </select>
+                <label class="form-label">관리비선납여부</label>
+                <select name="mgmtPayType" class="form-control" style="width:70px">
+                  <option>중간납</option><option>월선납</option><option>월후납</option>
+                </select>
+                <input name="mgmtPayDay" type="text" class="form-control" style="width:36px;text-align:center">
+              </div>
+              <div class="form-row">
+                <label class="form-label form-label--required">보증금합계</label>
+                <input name="depositSum" type="text" class="form-control form-control--amount" style="width:100px;text-align:right">
+                <label class="form-label">보증금인상율</label>
+                <input name="depositChange" type="text" class="form-control" style="width:60px">
+                <button class="icon-btn">🔍</button>
+                <label class="form-label">임대료인상율</label>
+                <input name="rentChange" type="text" class="form-control" style="width:60px">
+                <button class="icon-btn">🔍</button>
+                <label class="form-label">관리비인상율</label>
+                <input name="mgmtChange" type="text" class="form-control" style="width:60px">
+                <button class="icon-btn">🔍</button>
+              </div>
+              <div class="form-row">
+                <label class="form-label">보증보험여부</label>
+                <input type="checkbox" id="insuranceCheck" style="width:16px;height:16px;cursor:pointer">
+                <label class="form-label">렌트홍신고일자</label>
+                <input name="rentSignalDate" type="text" class="form-control" style="width:100px">
+              </div>
+            </div>
+          </div>
+
+          <!-- 메모 영역 -->
+          <div class="form-section">
+            <textarea class="form-control form-control--full" rows="3" style="resize:vertical;height:60px;border-radius:0;">3331112111</textarea>
+          </div>
+
+          <!-- 아래로 이동 버튼 -->
+          <div class="form-footer">
+            <button class="btn btn--scroll" id="scrollDownBtn">↓ 아래로 이동</button>
+          </div>
+
+        </div><!-- /form-panel -->
+      </section><!-- /split-view__detail -->
+
+    </div><!-- /split-view -->
+  </main>
+
+  <script>/* =============================================
+   ezREMS Common Utilities (common.js)
+   ============================================= */
+'use strict';
+
+const EzREMS = (() => {
+
+  /* ── 날짜 유틸 ── */
+  const Date_ = {
+    format(date) {
+      const d = date instanceof Date ? date : new Date(date);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return isNaN(d) ? '' : `${y}-${m}-${day}`;
+    },
+    today() { return this.format(new Date()); },
+    diffDays(dateStr) {
+      const now = new Date(); now.setHours(0,0,0,0);
+      const target = new Date(dateStr);
+      return Math.ceil((target - now) / 86400000);
+    },
+    isExpired(dateStr) { return this.diffDays(dateStr) < 0; },
+    isNear(dateStr, days = 30) {
+      const d = this.diffDays(dateStr);
+      return d >= 0 && d <= days;
+    },
+    /* 날짜 배지 클래스 결정 */
+    badgeClass(dateStr) {
+      if (!dateStr) return '';
+      if (this.isExpired(dateStr)) return 'date-badge--expired';
+      if (this.isNear(dateStr, 90)) return 'date-badge--near';
+      return 'date-badge--future';
+    },
+  };
+
+  /* ── 숫자 포맷 ── */
+  const Num = {
+    comma(val) {
+      const n = parseInt(String(val).replace(/,/g, ''), 10);
+      return isNaN(n) ? '' : n.toLocaleString('ko-KR');
+    },
+    unComma(val) { return parseInt(String(val).replace(/,/g, ''), 10) || 0; },
+    /** 금액 입력 필드 자동 콤마 */
+    bindCommaInput(selector) {
+      document.querySelectorAll(selector).forEach(el => {
+        el.addEventListener('input', function () {
+          const pos = this.selectionStart;
+          const raw = this.value.replace(/[^0-9]/g, '');
+          this.value = raw ? parseInt(raw).toLocaleString('ko-KR') : '';
+        });
+      });
+    },
+  };
+
+  /* ── DOM 유틸 ── */
+  const Dom = {
+    /** id 또는 selector로 요소 가져오기 */
+    get(selector) { return document.querySelector(selector); },
+    getAll(selector) { return document.querySelectorAll(selector); },
+    /** 요소 표시/숨기기 */
+    show(selector) { const el = typeof selector === 'string' ? this.get(selector) : selector; if (el) el.style.display = ''; },
+    hide(selector) { const el = typeof selector === 'string' ? this.get(selector) : selector; if (el) el.style.display = 'none'; },
+    /** 폼 초기화 */
+    resetForm(formSelector) {
+      this.getAll(`${formSelector} input, ${formSelector} select, ${formSelector} textarea`)
+        .forEach(el => { el.type === 'checkbox' ? el.checked = false : el.value = ''; });
+    },
+    /** 값 채우기 */
+    fillForm(formSelector, data) {
+      Object.keys(data).forEach(key => {
+        const el = this.get(`${formSelector} [name="${key}"], ${formSelector} #${key}`);
+        if (!el) return;
+        if (el.type === 'checkbox') el.checked = !!data[key];
+        else el.value = data[key] ?? '';
+      });
+    },
+  };
+
+  /* ── 알림 ── */
+  const Toast = {
+    show(message, type = 'info', duration = 3000) {
+      const el = document.createElement('div');
+      el.className = `toast toast--${type}`;
+      el.textContent = message;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), duration);
+    },
+    success(msg) { this.show(msg, 'success'); },
+    error(msg)   { this.show(msg, 'error'); },
+    info(msg)    { this.show(msg, 'info'); },
+  };
+
+  /* ── 로딩 ── */
+  const Loading = {
+    _el: null,
+    show() {
+      if (this._el) return;
+      this._el = document.createElement('div');
+      this._el.className = 'loading-overlay';
+      this._el.innerHTML = '<div class="loading-spinner"></div>';
+      document.body.appendChild(this._el);
+    },
+    hide() {
+      if (this._el) { this._el.remove(); this._el = null; }
+    },
+  };
+
+  /* ── AJAX (fetch 래퍼) ── */
+  const Ajax = {
+    async get(url, params = {}) {
+      const query = new URLSearchParams(params).toString();
+      const res = await fetch(query ? `${url}?${query}` : url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    },
+    async post(url, data = {}) {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    },
+  };
+
+  /* ── 테이블 렌더링 ── */
+  const Table = {
+    /**
+     * 데이터 테이블 행 렌더링
+     * @param {string} tbodySelector - tbody 셀렉터
+     * @param {Array}  data          - 배열 데이터
+     * @param {Function} rowFn       - (row, idx) => '<tr>...</tr>' 반환 함수
+     */
+    render(tbodySelector, data, rowFn) {
+      const tbody = document.querySelector(tbodySelector);
+      if (!tbody) return;
+      tbody.innerHTML = data.length
+        ? data.map((row, i) => rowFn(row, i)).join('')
+        : '<tr><td colspan="100" style="text-align:center;padding:20px;color:#999;">데이터가 없습니다.</td></tr>';
+    },
+    /** 날짜 셀 렌더링 (만료 여부에 따라 배지 자동 적용) */
+    dateCell(dateStr) {
+      if (!dateStr) return '<td></td>';
+      const cls = Date_.badgeClass(dateStr);
+      return cls
+        ? `<td><span class="date-badge ${cls}">${dateStr}</span></td>`
+        : `<td>${dateStr}</td>`;
+    },
+  };
+
+  /* ── GNB 타이머 ── */
+  const Timer = {
+    _interval: null,
+    _seconds: 1800,
+    start(seconds = 1800) {
+      this._seconds = seconds;
+      const el = document.querySelector('.gnb__timer');
+      if (!el) return;
+      this._interval = setInterval(() => {
+        if (this._seconds <= 0) { clearInterval(this._interval); return; }
+        this._seconds--;
+        const m = String(Math.floor(this._seconds / 60)).padStart(2, '0');
+        const s = String(this._seconds % 60).padStart(2, '0');
+        el.textContent = `${m}:${s}`;
+      }, 1000);
+    },
+    reset(seconds = 1800) {
+      clearInterval(this._interval);
+      this.start(seconds);
+    },
+  };
+
+  /* ── 탭 관리 ── */
+  const Tabs = {
+    init() {
+      document.querySelectorAll('.tab-bar__item').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.tab-bar__item').forEach(t => t.classList.remove('tab-bar__item--active'));
+          tab.classList.add('tab-bar__item--active');
+        });
+        const closeBtn = tab.querySelector('.tab-close');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            tab.remove();
+          });
+        }
+      });
+    },
+  };
+
+  /* ── 공개 API ── */
+  return { Date_, Num, Dom, Toast, Loading, Ajax, Table, Timer, Tabs };
+
+})();
+
+/* DOM 준비 후 공통 초기화 */
+document.addEventListener('DOMContentLoaded', () => {
+  EzREMS.Tabs.init();
+  EzREMS.Timer.start(1800);
+  EzREMS.Num.bindCommaInput('.form-control--amount');
+});
+
+/* =============================================
+   ezREMS Page Business Logic (page.js)
+   페이지별 로직을 여기에 작성합니다.
+   ============================================= */
+'use strict';
+
+/* ── 샘플 데이터 ── */
+const SAMPLE_DATA = [
+  { no: 1,  dong: '',    reg: '',    use: '',     type: '',    name: 'a',      start: '2023-04-10', end: '2027-04-09', move: '',           out: '' },
+  { no: 2,  dong: '',    reg: '',    use: '',     type: '',    name: 'a',      start: '2023-04-10', end: '2027-04-09', move: '',           out: '' },
+  { no: 3,  dong: '',    reg: '',    use: '',     type: '',    name: '베우성', start: '2023-03-10', end: '2024-03-09', move: '',           out: '' },
+  { no: 4,  dong: '',    reg: '',    use: '',     type: '',    name: '박찬호', start: '2026-04-20', end: '2028-04-19', move: '',           out: '' },
+  { no: 5,  dong: '',    reg: '',    use: '',     type: '',    name: '이승연', start: '2025-08-25', end: '2026-08-24', move: '',           out: '' },
+  { no: 6,  dong: '',    reg: '',    use: '',     type: '',    name: '박찬호', start: '2025-08-28', end: '2026-08-27', move: '',           out: '' },
+  { no: 7,  dong: '',    reg: '',    use: '',     type: '',    name: '김재옥', start: '2025-12-24', end: '2027-12-23', move: '',           out: '' },
+  { no: 8,  dong: '쥬라기', reg: '101', use: '101', type: '',  name: '김황후', start: '2024-04-02', end: '2025-04-01', move: '',          out: '' },
+  { no: 9,  dong: '쥬라기', reg: '101', use: '101', type: '',  name: '김황후', start: '2024-04-02', end: '2028-04-01', move: '',          out: '' },
+  { no: 10, dong: '쥬라기', reg: '101', use: '101-1', type: '84A', name: '구원스', start: '2024-06-25', end: '2025-06-24', move: '',     out: '' },
+  { no: 11, dong: '쥬라기', reg: '101', use: '101-2', type: '84A', name: '김재옥', start: '2022-07-25', end: '2024-07-24', move: '',     out: '' },
+  { no: 12, dong: '101', reg: '1004', use: '1004', type: '',  name: '이규인', start: '2025-11-06', end: '2026-12-31', move: '2023-11-06', out: '' },
+  { no: 13, dong: '101', reg: '1004', use: '1004', type: '',  name: '이규인', start: '2025-11-06', end: '2026-12-31', move: '2023-11-06', out: '' },
+  { no: 14, dong: '102', reg: '1004', use: '1004', type: '',  name: '구원스', start: '2023-12-27', end: '2031-12-26', move: '',          out: '' },
+  { no: 15, dong: '102', reg: '1004', use: '1004', type: '',  name: '구원스', start: '2031-12-27', end: '2032-12-26', move: '',          out: '' },
+  { no: 16, dong: '102', reg: '1004', use: '1004', type: '',  name: '구원스', start: '2032-12-27', end: '2034-12-26', move: '',          out: '' },
+  { no: 17, dong: '109', reg: '999',  use: '999',  type: '74B-1', name: '구원스', start: '2025-01-16', end: '2027-01-15', move: '',     out: '' },
+];
+
+const DETAIL_DATA = {
+  name: 'a',
+  bizNo: '880817-6******',
+  contact: '',
+  taxManager: 'ㄴooㄴooㄴo',
+  phone: '',
+  email: '1',
+  channel: '직접계약(법인)',
+  subscType: '삼성동 뉴스테이+ 특약 4년',
+  deposit: '',
+  contractType: '단독관리비',
+  contractDate: '2022-12-16',
+  contractPeriodStart: '2023-04-10',
+  contractPeriodEnd: '2027-04-09',
+  moveInDoc: '2023-04-10',
+  moveIn: '',
+  vacateExpected: '2025-12-17',
+  vacateDate: '',
+  rent: '0',
+  rentBaseDate: '2023-04-10',
+  rentTaxable: '과세',
+  rentPayType: '월선납',
+  rentPayDay: '15',
+  management: '0',
+  mgmtBaseDate: '2023-04-10',
+  mgmtTaxable: '면세',
+  mgmtPayType: '중간납',
+  mgmtPayDay: '15',
+  depositSum: '',
+  depositChange: '-',
+  rentChange: '-',
+  mgmtChange: '-',
+  insuranceCheck: false,
+  rentSignalDate: '2025-11-20',
+};
+
+/* ── 현재 선택 행 ── */
+let selectedRow = null;
+
+/* ── 테이블 행 생성 함수 ── */
+function renderRow(row, idx) {
+  const endBadge = (() => {
+    if (!row.end) return '';
+    const cls = EzREMS.Date_.badgeClass(row.end);
+    return cls ? `<span class="date-badge ${cls}">${row.end}</span>` : row.end;
+  })();
+
+  const dong = row.dong ? `<span class="tag-badge">${row.dong}</span>` : '';
+  const reg  = row.reg  ? `<span class="tag-badge">${row.reg}</span>`  : '';
+  const use  = row.use  ? `<span class="tag-badge">${row.use}</span>`  : '';
+
+  return `<tr data-idx="${idx}" class="${idx === 0 ? 'row--selected' : ''}">
+    <td>${row.no}</td>
+    <td>${dong}</td>
+    <td>${reg}</td>
+    <td>${use}</td>
+    <td>${row.type}</td>
+    <td style="text-align:left;padding-left:8px">${row.name}</td>
+    <td>${row.start}</td>
+    <td>${endBadge}</td>
+    <td>${row.move || ''}</td>
+    <td>${row.out || ''}</td>
+  </tr>`;
+}
+
+/* ── 상세 폼 채우기 ── */
+function fillDetail(data) {
+  EzREMS.Dom.fillForm('#detailForm', data);
+  document.getElementById('insuranceCheck').checked = data.insuranceCheck;
+}
+
+/* ── 행 클릭 이벤트 ── */
+function bindRowClick() {
+  document.querySelector('#contractTbody').addEventListener('click', e => {
+    const tr = e.target.closest('tr');
+    if (!tr) return;
+    document.querySelectorAll('#contractTbody tr').forEach(r => r.classList.remove('row--selected'));
+    tr.classList.add('row--selected');
+    selectedRow = tr;
+    fillDetail(DETAIL_DATA);
+    EzREMS.Toast.info('행을 선택했습니다.');
+  });
+}
+
+/* ── 조회 버튼 ── */
+function bindSearchBtn() {
+  document.getElementById('searchBtn').addEventListener('click', () => {
+    EzREMS.Loading.show();
+    setTimeout(() => {
+      EzREMS.Table.render('#contractTbody', SAMPLE_DATA, renderRow);
+      bindRowClick();
+      EzREMS.Loading.hide();
+      EzREMS.Toast.success('조회가 완료되었습니다. (' + SAMPLE_DATA.length + '건)');
+    }, 600);
+  });
+}
+
+/* ── 저장 버튼 ── */
+function bindSaveBtn() {
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    EzREMS.Toast.success('저장되었습니다.');
+  });
+}
+
+/* ── 엑셀 버튼 (테이블 → CSV 변환) ── */
+function bindExcelBtn() {
+  document.getElementById('excelBtn').addEventListener('click', () => {
+    const rows = [['No', '동', '등기호실', '사용호실', '타입', '계약자명', '계약시작일', '계약종료일', '실입주일', '퇴거']];
+    SAMPLE_DATA.forEach(r => rows.push([r.no, r.dong, r.reg, r.use, r.type, r.name, r.start, r.end, r.move, r.out]));
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = '임대계약관리.csv';
+    a.click(); URL.revokeObjectURL(url);
+    EzREMS.Toast.success('엑셀(CSV)로 다운로드 되었습니다.');
+  });
+}
+
+/* ── 삭제 버튼 ── */
+function bindDeleteBtn() {
+  document.getElementById('deleteBtn').addEventListener('click', () => {
+    if (!confirm('선택한 항목을 삭제하시겠습니까?')) return;
+    EzREMS.Toast.error('삭제되었습니다.');
+  });
+}
+
+/* ── 아래로 이동 버튼 ── */
+function bindScrollBtn() {
+  document.getElementById('scrollDownBtn').addEventListener('click', () => {
+    document.querySelector('.split-view__detail').scrollTo({ top: 9999, behavior: 'smooth' });
+  });
+}
+
+/* ── 페이지 초기화 ── */
+document.addEventListener('DOMContentLoaded', () => {
+  /* 초기 테이블 렌더링 */
+  EzREMS.Table.render('#contractTbody', SAMPLE_DATA, renderRow);
+  /* 초기 상세 폼 채우기 */
+  fillDetail(DETAIL_DATA);
+  /* 이벤트 바인딩 */
+  bindRowClick();
+  bindSearchBtn();
+  bindSaveBtn();
+  bindExcelBtn();
+  bindDeleteBtn();
+  bindScrollBtn();
+});</script>
+</body>
+</html>
